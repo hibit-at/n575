@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>n575Analyzer</title>
+</head>
+
+<body>
+    <h1>n575データベース</h1>
+    <p>無料枠のデータベースなのですぐに限界がきます。悪しからず。</p>
+    <h3>人気っぽいやつ</h3>
+    <blockquote class="twitter-tweet">
+    <p lang="ja" dir="ltr">
+    <a href="https://twitter.com/{{top.scr}}/status/{{top.tw_id}}?ref_src=twsrc%5Etfw"></a>
+    </blockquote>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    ※スコアを計算して上位10ツイからランダム選出
+    <h3>回数が多い人</h3>
+    <table border = 1>
+    <tr>
+    <th>user</th>
+    <th>n</th>
+    </tr>
+    {% for m in many %}
+    <tr>
+    <td>{{m.user}} (<a href="https://twitter.com/{{m.scr}}">@{{ m.scr }}</a>)</td>
+    <td>{{m.num}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <h3>n575ツイート一覧</h3>
+    <table border="1">
+        <tr>
+            <th>date</th>
+            <th>user</th>
+            <th>text</th>
+            <th>RT</th>
+            <th>fav</th>
+        </tr>
+        {% for tweet in data %}
+        <tr>
+            <td><a href="https://twitter.com/{{tweet.scr}}/status/{{tweet.tw_id}}" target="_blank">{{ tweet.dt }}</a>
+            </td>
+            <td>{{ tweet.usr }} (<a href="https://twitter.com/{{tweet.scr}}">@{{ tweet.scr }}</a>)</td>
+            <td>{{ tweet.txt }}</td>
+            <td>{{ tweet.ret }}</td>
+            <td>{{ tweet.fav }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>

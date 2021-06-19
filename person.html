@@ -2,13 +2,14 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <meta charset="utf-8" />
     <title>n575Database</title>
 </head>
 
 <body>
     {{ path }}
-    <h1>{{name}}さんの個人ページ</h1>
+    <h1 class="p-3 mb-2 bg-dark text-white">{{name}}さんの個人ページ</h1>
     <blockquote class="twitter-tweet">
     <p lang="ja" dir="ltr">
     <a href="https://twitter.com/{{top.scr}}/status/{{top.tw_id}}?ref_src=twsrc%5Etfw"></a>
@@ -16,13 +17,15 @@
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     </table>
     <h3>n575ツイート一覧</h3>
-    <table border="1">
+    <table border="1" class="table table-striped table-hover table-sm">
+        <thead class="table-dark">
         <tr>
             <th>date</th>
             <th>text</th>
             <th>RT</th>
             <th>fav</th>
         </tr>
+        </thead>
         {% for tweet in data %}
         <tr>
             <td><a href="https://twitter.com/{{tweet.scr}}/status/{{tweet.tw_id}}" target="_blank">{{ tweet.dt }}</a>
@@ -33,5 +36,5 @@
         </tr>
         {% endfor %}
     </table>
-    <a href="/"> トップページ </a>
+    <a class="btn btn-dark" href="/" role="button">トップページ</a>
 </body>

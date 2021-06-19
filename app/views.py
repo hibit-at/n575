@@ -23,7 +23,11 @@ def index(request):#追加
         name = obj.name
         dic_list.append({'scr':scr,'user':name, 'num':m[1]})
     choice = random.randint(0,5)
-    top = Tweet.objects.order_by('score').reverse().all()[choice]
+    top = Tweet.objects.order_by('dt').reverse()[:20].values()
+    top = list(top)
+    top = sorted(top,key=lambda x : -x['score'])
+    print(top)
+    top = top[choice]
     params = {'data': data, 'userlist' : user_list, 'many' : dic_list , 'top' : top}
     return render(request, 'index.html', params)
 

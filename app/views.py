@@ -26,7 +26,6 @@ def index(request):#追加
     top = Tweet.objects.order_by('dt').reverse()[:30].values()
     top = list(top)
     top = sorted(top,key=lambda x : -x['score'])
-    print(top)
     top = top[choice]
     params = {'data': data, 'userlist' : user_list, 'many' : dic_list , 'top' : top}
     return render(request, 'index.html', params)
@@ -44,6 +43,5 @@ def person(request):
     path = request.get_full_path()
     obj = UserList.objects.get(usr_id = user)
     name = obj.name
-    print(user)
     params = {'data' : data, 'top' : top, 'name' : name}
     return render(request, 'person.html',params)

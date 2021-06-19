@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ('SK')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -36,6 +36,8 @@ if os.path.exists('local.py'):
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    from local import SK
+    SECRET_KEY = SK
 else:
     DEBUG = False
     ALLOWED_HOSTS = ['*']
@@ -43,6 +45,7 @@ else:
     DATABASES = {
         'default': dj_database_url.config()
     }
+    SECRET_KEY = os.environ['SK']
 # Application definition
 
 INSTALLED_APPS = [

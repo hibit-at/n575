@@ -23,7 +23,7 @@ def index(request):#追加
         name = obj.name
         dic_list.append({'scr':scr,'user':name, 'num':m[1]})
     choice = random.randint(0,5)
-    top = Tweet.objects.order_by('dt').reverse()[:20].values()
+    top = Tweet.objects.order_by('dt').reverse()[:30].values()
     top = list(top)
     top = sorted(top,key=lambda x : -x['score'])
     print(top)
@@ -35,3 +35,15 @@ def user_list(request):
     data = UserList.objects.all()
     params = {'data' : data}
     return render(request, 'userlist.html',params)
+
+def person(request):
+    
+    user = request.GET.get('user','')
+    data = Tweet.objects.filter(scr=user).order_by('dt').reverse()
+    top = data[0]
+    path = request.get_full_path()
+    obj = UserList.objects.get(usr_id = user)
+    name = obj.name
+    print(user)
+    params = {'data' : data, 'top' : top, 'name' : name}
+    return render(request, 'person.html',params)

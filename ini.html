@@ -8,36 +8,18 @@
 </head>
 
 <body>
-    <h1 class="p-3 mb-2 bg-dark text-white">n575データベース</h1>
-    <p class="text-muted">無料枠のデータベースなのですぐに限界がきます。悪しからず。作者 <a href="https://twitter.com/hibit_at">hibit</a> (<a href="https://github.com/hibit-at/n575">github</a>) </p>
-    <h3>今日のラッキー575</h3>
+    {{ path }}
+    <h1 class="p-3 mb-2 bg-dark text-white">重複チェック</h1>
+    <h1>検索ワード : {{word}}</h1>
+    {% if first is not None%}
     <blockquote class="twitter-tweet">
     <p lang="ja" dir="ltr">
-    <a href="https://twitter.com/{{top.scr}}/status/{{top.tw_id}}?ref_src=twsrc%5Etfw"></a>
+    <a href="https://twitter.com/{{first.scr}}/status/{{first.tw_id}}?ref_src=twsrc%5Etfw"></a>
     </blockquote>
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-    <h3>回数が多い人</h3>
-    <table border="1" class="table table-striped table-hover table-sm">
-    <tr>
-    <thead class="table-dark">
-    <th>user</th>
-    <th>n</th>
-    </thead>
-    </tr>
-    {% for m in many %}
-    <tr>
-    <td>{{m.user}} ({{ tweet.usr }}<a href="/person/?user={{m.scr}}">@{{ m.scr }}</a>)</td>
-    <td>{{m.num}}</td>
-    </tr>
-    {% endfor %}
+    <p>↑最初にツイートした人</p>
     </table>
     <h3>n575ツイート一覧</h3>
-    <form action='ini/' method='post'>
-    {% csrf_token %}
-    重複チェック
-    <input type="text" name="word" placeholder="（例）こんまりの影響力がはんぱない" style="width: 20em;">
-    <input type="submit" value="チェック">
-    </form>
     <table border="1" class="table table-striped table-hover table-sm">
         <thead class="table-dark">
         <tr>
@@ -59,4 +41,8 @@
         </tr>
         {% endfor %}
     </table>
+    {% else %}
+    <p>このキーワードを含むn575はデータベースに存在しないようです。</p>
+    {% endif %}
+    <a class="btn btn-dark" href="/" role="button">トップページ</a>
 </body>

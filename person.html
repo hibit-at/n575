@@ -1,15 +1,5 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <meta charset="utf-8" />
-    <title>n575</title>
-</head>
-
-<body>
-    {{ path }}
-    <h1 class="p-3 mb-2 bg-dark text-white">n575データベース</h1>
+{% extends 'base.html' %}
+{% block content %}
     <h3>{{name}}さんの個人ページ</h3>
     <blockquote class="twitter-tweet">
     <p lang="ja" dir="ltr">
@@ -36,5 +26,4 @@
         </tr>
         {% endfor %}
     </table>
-    <a class="btn btn-dark" href="/" role="button">トップページ</a>
-</body>
+{% endblock %}

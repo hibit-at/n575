@@ -29,7 +29,7 @@ def index(request):  # 追加
     top = sorted(top, key=lambda x: -x['score'])
     top = top[choice]
     params = {'data': data, 'userlist': user_list,
-              'many': dic_list, 'top': top}
+              'many': dic_list, 'top': top, 'len' : len(data)}
     return render(request, 'index.html', params)
 
 

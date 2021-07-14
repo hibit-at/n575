@@ -1,5 +1,6 @@
 import random
 from collections import defaultdict
+from math import ceil
 
 from django.http import HttpResponse  # 追加
 from django.shortcuts import render
@@ -10,13 +11,22 @@ from app.models import Tweet, UserList
 
 
 def index(request):  # 追加
-    data = Tweet.objects.order_by('dt').reverse().all()
+    page = 0
+    if 'page' in request.GET:
+        page = int(request.GET['page']) - 1
+    span = 50
+    start = page*span
+    end = start+span
+    all_data = Tweet.objects.all()
+    all_tweet = len(Tweet.objects.all())
+    all_pages = range(ceil(all_tweet/span))
+    data = Tweet.objects.order_by('dt').reverse()[start:end]
     userlist = UserList.objects.all()
     many = defaultdict(int)
-    for d in data:
-        many[d.scr] += 1
+    for a in all_data:
+        many[a.scr] += 1
     many = sorted(many.items(), key=lambda x: -x[1])
-    many = many[:5]
+    many = many[:7]
     dic_list = []
     for m in many:
         scr = m[0]
@@ -28,8 +38,9 @@ def index(request):  # 追加
     top = list(top)
     top = sorted(top, key=lambda x: -x['score'])
     top = top[choice]
-    params = {'data': data, 'userlist': user_list,
-              'many': dic_list, 'top': top, 'len' : len(data)}
+    params = {'data': all_data, 'userlist': user_list,
+              'many': dic_list, 'top': top, 'len' : all_tweet,
+              'page' : page, 'all_pages' : all_pages}
     return render(request, 'index.html', params)
 
 

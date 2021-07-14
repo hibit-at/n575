@@ -17,10 +17,10 @@ def index(request):  # 追加
     span = 50
     start = page*span
     end = start+span
-    all_data = Tweet.objects.all()
+    all_data = Tweet.objects.order_by('dt').reverse()
     all_tweet = len(Tweet.objects.all())
     all_pages = range(ceil(all_tweet/span))
-    data = Tweet.objects.order_by('dt').reverse()[start:end]
+    data = all_data[start:end]
     userlist = UserList.objects.all()
     many = defaultdict(int)
     for a in all_data:

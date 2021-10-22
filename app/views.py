@@ -66,13 +66,10 @@ def user_list(request):
     return render(request, 'userlist.html', params)
 
 
-def person(request):
-
-    user = request.GET.get('user')
-    data = Tweet.objects.filter(scr=user).order_by('dt').reverse()
+def person(request,scr):
+    data = Tweet.objects.filter(scr=scr).order_by('dt').reverse()
     top = data[0]
-    path = request.get_full_path()
-    obj = UserList.objects.get(usr_id=user)
+    obj = UserList.objects.get(usr_id=scr)
     name = obj.name
     params = {'data': data, 'top': top, 'name': name}
     return render(request, 'person.html', params)

@@ -23,6 +23,15 @@
     {% endfor %}
     </table>
     <h3>n575ツイート一覧（{{len}} tweets）</h3>
+    <p>
+    {% if page > 1 %}
+    <a href='/?page={{page|add:-1}}'>＜</a>　
+    {% endif %}
+    {{page}}ページ目（{{start|add:1}}～{{end}}）
+    {% if page < all_pages %}
+    　<a href='/?page={{page|add:1}}'>＞</a>
+    {% endif %}
+    </p>
     <form action='ini/' method='post'>
     {% csrf_token %}
     重複チェック

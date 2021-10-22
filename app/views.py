@@ -11,17 +11,16 @@ from app.models import Tweet, UserList
 
 
 def index(request):  # 追加
-    page = 0
+    page = 1
     if 'page' in request.GET:
-        page = int(request.GET['page']) - 1
+        page = int(request.GET['page'])
     span = 50
-    start = page*span
+    start = (page-1)*span
     end = start+span
     all_data = Tweet.objects.order_by('dt').reverse()
     all_tweet = len(Tweet.objects.all())
-    all_pages = range(ceil(all_tweet/span))
+    all_pages = ceil(all_tweet/span)
     data = all_data[start:end]
-    userlist = UserList.objects.all()
     many = defaultdict(int)
     for a in all_data:
         many[a.scr] += 1
@@ -38,9 +37,11 @@ def index(request):  # 追加
     top = list(top)
     top = sorted(top, key=lambda x: -x['score'])
     top = top[choice]
-    params = {'data': all_data, 'userlist': user_list,
+    end = min(end,all_tweet)
+    params = {'data': data, 'userlist': user_list,
               'many': dic_list, 'top': top, 'len' : all_tweet,
-              'page' : page, 'all_pages' : all_pages}
+              'page' : page, 'all_pages' : all_pages,
+              'start' : start, 'end' : end,}
     return render(request, 'index.html', params)
 
 

@@ -45,15 +45,18 @@ if req.status_code == 200:
             txt = line['text']
             fav = line['favorite_count']
             ret = line['retweet_count']
+            defaults = {
+                'dt' : dt,
+                'usr' : usr,
+                'scr' : scr,
+                'txt' : txt,
+                'fav' : fav,
+                'ret' : ret,
+                'score' : ret*10+fav,
+            }
             Tweet.objects.update_or_create(
                 tw_id=tw_id,
-                dt=dt,
-                usr=usr,
-                scr=scr,
-                txt=txt,
-                fav=fav,
-                ret=ret,
-                score=ret*10+fav,
+                defaults=defaults,
             )
             UserList.objects.update_or_create(
                 usr_id=scr,

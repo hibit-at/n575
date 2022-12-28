@@ -46,8 +46,10 @@ def index(request):  # 追加
 
 
 def ini(request, word=''):
+    print('ini')
     if 'word' in request.POST:
         word = request.POST['word']
+    print(word)
     data = Tweet.objects.filter(txt__contains=word).order_by('dt')
     if len(data) > 0:
         first = data[0]
@@ -67,6 +69,7 @@ def user_list(request):
 
 
 def person(request,scr):
+    print('person')
     data = Tweet.objects.filter(scr=scr).order_by('dt').reverse()
     top = data[0]
     obj = UserList.objects.get(usr_id=scr)

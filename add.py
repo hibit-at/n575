@@ -60,7 +60,7 @@ if req.status_code == 200:
             )
             UserList.objects.update_or_create(
                 usr_id=scr,
-                name=usr,
+                defaults = {'name' : scr},
             )
 else:
     print("Failed: %d" % req.status_code)

@@ -10,6 +10,7 @@ from requests_oauthlib import OAuth1Session
 sys.path.append('n575')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'n575.settings')
 django.setup()
+from app.models import Tweet, UserList
 
 if os.path.exists('local.py'):
     from local import AT, ATS, CK, CS
@@ -22,7 +23,6 @@ else:
 twitter = OAuth1Session(CK, CS, AT, ATS)  # 認証処理
 
 url = 'https://api.twitter.com/1.1/search/tweets.json'
-from app.models import Tweet, UserList
 
 keyword = '#n575'
 params = {'count': 100, 'q': keyword}
@@ -43,24 +43,20 @@ if req.status_code == 200:
             usr = line['user']['name']
             scr = line['user']['screen_name']
             txt = line['text']
-            fav = line['favorite_count']
-            ret = line['retweet_count']
+            user = UserList.objects.update_or_create(
+                scr=scr,
+                defaults={'name' : usr}
+            )[0]
             defaults = {
-                'dt' : dt,
-                'usr' : usr,
-                'scr' : scr,
-                'txt' : txt,
-                'fav' : fav,
-                'ret' : ret,
-                'score' : ret*10+fav,
+                'author': user,
+                'dt': dt,
+                'usr': usr,
+                'scr': scr,
+                'txt': txt,
             }
             Tweet.objects.update_or_create(
                 tw_id=tw_id,
                 defaults=defaults,
-            )
-            UserList.objects.update_or_create(
-                usr_id=scr,
-                defaults = {'name' : scr},
             )
 else:
     print("Failed: %d" % req.status_code)

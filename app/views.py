@@ -1,78 +1,51 @@
-import random
-from collections import defaultdict
-from math import ceil
-
-from django.http import HttpResponse  # 追加
 from django.shortcuts import render
+from django.db.models import Count
+from rest_framework import generics
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from app.models import Tweet, UserList
-
-# Create your views here.
-
-
-def index(request):  # 追加
-    page = 1
-    if 'page' in request.GET:
-        page = int(request.GET['page'])
-    span = 50
-    start = (page-1)*span
-    end = start+span
-    all_data = Tweet.objects.order_by('dt').reverse()
-    all_tweet = len(Tweet.objects.all())
-    all_pages = ceil(all_tweet/span)
-    data = all_data[start:end]
-    many = defaultdict(int)
-    for a in all_data:
-        many[a.scr] += 1
-    many = sorted(many.items(), key=lambda x: -x[1])
-    many = many[:7]
-    dic_list = []
-    for m in many:
-        scr = m[0]
-        obj = UserList.objects.get(usr_id=scr)
-        name = obj.name
-        dic_list.append({'scr': scr, 'user': name, 'num': m[1]})
-    choice = random.randint(0, 5)
-    top = Tweet.objects.order_by('dt').reverse()[:30].values()
-    top = list(top)
-    top = sorted(top, key=lambda x: -x['score'])
-    top = top[choice]
-    end = min(end,all_tweet)
-    params = {'data': data, 'userlist': user_list,
-              'many': dic_list, 'top': top, 'len' : all_tweet,
-              'page' : page, 'all_pages' : all_pages,
-              'start' : start, 'end' : end,}
-    return render(request, 'index.html', params)
+from .models import Tweet, UserList
+from .serializers import TweetSerializer, UserListSerializer
+from .filters import TweetFilter
 
 
-def ini(request, word=''):
-    print('ini')
-    if 'word' in request.POST:
-        word = request.POST['word']
-    print(word)
-    data = Tweet.objects.filter(txt__contains=word).order_by('dt')
-    if len(data) > 0:
-        first = data[0]
-    else:
-        first = None
-    if word == '':
-        first  = None
-    data = Tweet.objects.filter(txt__contains=word).order_by('dt').reverse()
-    params = {'first': first, 'data': data, 'word': word}
-    return render(request, 'ini.html', params)
+class TweetListAPI(generics.ListAPIView):
+    queryset = Tweet.objects.order_by('-dt')
+    serializer_class = TweetSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TweetFilter
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        total_results = queryset.count()
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            paginated_response = self.get_paginated_response(serializer.data)
+            paginated_response.data['total_results'] = total_results
+            return paginated_response
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({'results': serializer.data, 'total_results': total_results})
 
 
-def user_list(request):
-    data = UserList.objects.all()
-    params = {'data': data}
-    return render(request, 'userlist.html', params)
+class UserListAPI(generics.ListAPIView):
+    serializer_class = UserListSerializer
+
+    def get_queryset(self):
+        queryset = UserList.objects.annotate(
+            tweets_size=Count('tweets')).order_by('-tweets_size')
+        return queryset
 
 
-def person(request,scr):
-    print('person')
-    data = Tweet.objects.filter(scr=scr).order_by('dt').reverse()
-    top = data[0]
-    obj = UserList.objects.get(usr_id=scr)
-    name = obj.name
-    params = {'data': data, 'top': top, 'name': name}
-    return render(request, 'person.html', params)
+class LuckyTweetAPI(APIView):
+    def get(self, request):
+        lucky_tweet = Tweet.objects.order_by('?').first()
+        serializer = TweetSerializer(lucky_tweet)
+        return Response(serializer.data)
+
+
+def index(request):
+    return render(request, 'index.html')
